@@ -14,6 +14,7 @@ export default [
         "error",
         {
           endOfLine: "auto",
+          trailingComma: "es5",
         },
       ],
       "spaced-comment": "off",

@@ -1,10 +1,6 @@
 const jwt = require("jsonwebtoken");
 const argon2 = require("argon2");
-const {
-  createUser,
-  getUserByEmail,
-  getUsersPassword,
-} = require("../models/userModel");
+const { createUser, getUserByEmail } = require("../models/userModel");
 const AppError = require("../utils/appError");
 
 const signToken = (id) => {
@@ -55,18 +51,9 @@ exports.createUser = async (req, res, next) => {
 
 exports.loginUser = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email } = req.body;
 
     const user = await getUserByEmail(email);
-
-    if (!user) throw new AppError("User not found", 404);
-
-    const { password: usersPassword } = await getUsersPassword(user.id);
-
-    const isPasswordCorrect = await argon2.verify(usersPassword, password);
-
-    if (!isPasswordCorrect)
-      throw new AppError("Incorrect email or password", 401);
 
     sendCookie(res, user.id);
 

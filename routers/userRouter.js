@@ -6,13 +6,27 @@ const {
   updateUser,
   deleteUser,
 } = require("../controllers/userController");
-// const checkBody = require("../validators/checkBody");
-// const validate = require("../validators/validate");
+const {
+  validateSignup,
+  validateLogin,
+  validateUpdateUser,
+} = require("../validators/checkBody");
 
-userRouter.route("/").get(getAllUsers).post(createUser);
+const { checkParamsId } = require("../validators/checkParams");
+const { validate } = require("../validators/validate");
 
-userRouter.route("/login").post(loginUser);
+userRouter
+  .route("/")
+  .get(getAllUsers)
+  .post(validateSignup, validate, createUser);
 
-userRouter.route("/:id").get(getUserById).put(updateUser).delete(deleteUser);
+userRouter.route("/login").post(validateLogin, validate, loginUser);
+
+userRouter
+  .route("/:id")
+  .all(checkParamsId, validate)
+  .get(getUserById)
+  .put(validateUpdateUser, validate, updateUser)
+  .delete(deleteUser);
 
 module.exports = userRouter;

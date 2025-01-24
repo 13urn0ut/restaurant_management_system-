@@ -33,7 +33,8 @@ exports.getUsersOrders = async (req, res, next) => {
   try {
     const orders = await getUsersOrders(req.params.userId);
 
-    if (!orders) throw new AppError("No orders found", 404);
+    if (!orders || orders.length === 0)
+      throw new AppError("No orders found", 404);
 
     res.status(200).json({
       status: "success",

@@ -1,6 +1,11 @@
 const jwt = require("jsonwebtoken");
 const argon2 = require("argon2");
-const { createUser, getUserByEmail } = require("../models/userModel");
+const {
+  createUser,
+  getUserByEmail,
+  getUserById,
+  getUsersRoles,
+} = require("../models/userModel");
 const AppError = require("../utils/appError");
 
 const signToken = (id) => {
@@ -65,3 +70,33 @@ exports.loginUser = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.protect = async (req, res, next) => {
+  try {
+    const token = req.cookies.jwt;
+
+    if (!token) throw new AppError("You are not logged in", 401);
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const currentUser = await getUserById(decoded.id);
+
+    if (!currentUser) throw new AppError("User not found", 404);
+
+    req.user = currentUser;
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.allowAccessTo =
+  (...roles) =>
+  async (req, res, next) => {
+    const userRole = await getUsersRoles(req.user.id);
+
+    if (!roles.includes(userRole)) next(new AppError("Access denied", 403));
+
+    next();
+  };

@@ -1,4 +1,5 @@
 const orderRouter = require("express").Router();
+const { protect } = require("../controllers/authController");
 const {
   createOrder,
   getUsersOrders,
@@ -22,17 +23,17 @@ orderRouter
   .route("/user/:userId")
   .all(checkParamsUserId, validate)
   .get(getUsersOrders)
-  .post(validateCreateOrder, validate, createOrder);
+  .post(protect, validateCreateOrder, validate, createOrder);
 
 orderRouter
   .route("/:orderId")
-  .all(checkParamsOrderId, validate)
-  .put(validateUpdateOrder, validate, updateOrder);
+  .all(protect, checkParamsOrderId, validate)
+  .put(protect, validateUpdateOrder, validate, updateOrder);
 
 orderRouter
   .route("/:orderId/user/:userId")
   .all(checkParamsUserId, checkParamsOrderId, validate)
-  .get(getUsersOrderById)
-  .delete(deleteOrder);
+  .get(protect, getUsersOrderById)
+  .delete(protect, deleteOrder);
 
 module.exports = orderRouter;

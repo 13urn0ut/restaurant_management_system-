@@ -1,5 +1,9 @@
 const userRouter = require("express").Router();
-const { createUser, loginUser } = require("../controllers/authController");
+const {
+  createUser,
+  loginUser,
+  protect,
+} = require("../controllers/authController");
 const {
   getAllUsers,
   getUserById,
@@ -25,8 +29,8 @@ userRouter.route("/login").post(validateLogin, validate, loginUser);
 userRouter
   .route("/:id")
   .all(checkParamsId, validate)
-  .get(getUserById)
-  .put(validateUpdateUser, validate, updateUser)
-  .delete(deleteUser);
+  .get(protect, getUserById)
+  .put(protect, validateUpdateUser, validate, updateUser)
+  .delete(protect, deleteUser);
 
 module.exports = userRouter;

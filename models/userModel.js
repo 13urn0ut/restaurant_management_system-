@@ -14,6 +14,11 @@ exports.createUser = async (user) => {
       VALUES (${createdUser.id}, ${user.password}, ${createdUser.created_at}, ${createdUser.updated_at})
       `;
 
+    await sql`
+      INSERT INTO user_roles (user_id, role_id)
+      VALUES (${createdUser.id}, 2)
+    `;
+
     return createdUser;
   });
 
@@ -36,6 +41,16 @@ exports.getUserByEmail = async (email) => {
     `;
 
   return user;
+};
+
+exports.getUsersRoles = async (id) => {
+  const [role] = await sql`
+    SELECT roles.role_name
+    FROM roles
+    WHERE roles.id = (SELECT user_roles.role_id FROM user_roles WHERE user_roles.user_id = ${id})
+    `;
+
+  return role;
 };
 
 exports.getUsersPassword = async (id) => {

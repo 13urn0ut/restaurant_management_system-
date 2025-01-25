@@ -1,4 +1,5 @@
 const menuRouter = require("express").Router();
+const { protect, allowAccessTo } = require("../controllers/authController");
 const {
   getAllMenu,
   createMenuItem,
@@ -16,13 +17,25 @@ const { validate } = require("../validators/validate");
 menuRouter
   .route("/")
   .get(getAllMenu)
-  .post(validateCreateMenuItem, validate, createMenuItem);
+  .post(
+    protect,
+    allowAccessTo("admin"),
+    validateCreateMenuItem,
+    validate,
+    createMenuItem
+  );
 
 menuRouter
   .route("/:id")
   .all(checkParamsId, validate)
   .get(getMenuItemById)
-  .put(validateUpdateMenuItem, validate, updateMenuItem)
-  .delete(deleteMenuItem);
+  .put(
+    protect,
+    allowAccessTo("admin"),
+    validateUpdateMenuItem,
+    validate,
+    updateMenuItem
+  )
+  .delete(protect, allowAccessTo("admin"), deleteMenuItem);
 
 module.exports = menuRouter;

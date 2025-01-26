@@ -94,7 +94,7 @@ exports.protect = async (req, res, next) => {
 exports.allowAccessTo =
   (...roles) =>
   async (req, res, next) => {
-    const userRole = await getUsersRoles(req.user.id);
+    const { role_name: userRole } = await getUsersRoles(req.user.id);
 
     if (!roles.includes(userRole)) next(new AppError("Access denied", 403));
 

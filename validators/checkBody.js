@@ -91,6 +91,13 @@ exports.validateUpdateUser = [
     .withMessage("Address is required"),
 
   checkExact([], { message: "Invalid fields" }),
+
+  body().custom((value) => {
+    if (Object.keys(value).length === 0) {
+      throw new Error("No fields to update");
+    }
+    return true;
+  }),
 ];
 
 exports.validateCreateOrder = [
@@ -109,6 +116,13 @@ exports.validateUpdateOrder = [
   body("total").trim().optional().notEmpty().withMessage("Total is required"),
 
   checkExact([], { message: "Invalid fields" }),
+
+  body().custom((value) => {
+    if (Object.keys(value).length === 0) {
+      throw new Error("No fields to update");
+    }
+    return true;
+  }),
 ];
 
 exports.validateCreateMenuItem = [
@@ -159,4 +173,11 @@ exports.validateUpdateMenuItem = [
     .withMessage("Category id is required"),
 
   checkExact([], { message: "Invalid fields" }),
+
+  body().custom((value) => {
+    if (Object.keys(value).length === 0) {
+      throw new Error("No fields to update");
+    }
+    return true;
+  }),
 ];
